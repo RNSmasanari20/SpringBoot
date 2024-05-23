@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>findById</title>
+</head>
+
+<body>
+
+<th:block th:insert="common/header"></th:block>
+
+<p>id:<span th:text="${aProduct.id}"></span></p>
+<p>商品名: <span th:text="${aProduct.name}"></span></p>
+<p>値段: <span th:text="${aProduct.price}"></span></p>
+
+<form th:action="@{/product/{id} (id = ${aProduct.id})}" method="post" >
+    <p>
+        <button type="submit"><span th:text="修正"></span></button>
+    </p>
+
+    <p>
+        <button type="submit" name="delete"><span th:text="削除"></span></button>
+    </p>
+</form>
+
+</body>
+</html>

@@ -1,0 +1,12 @@
+@charset "UTF-8";
+table, th, td {
+    border: 1px solid #000000;
+}
+
+#loseYou{
+font-size: 80%;
+}
+
+.error {
+color: red;
+}
