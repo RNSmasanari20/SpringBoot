@@ -88,5 +88,10 @@ public class TestController {
         return "redirect:/product-list";
     }
 
+    @GetMapping("/product-management")
+    public String screenSend(){
+        return "productsOneScreen";
+    }
+
 }
 
