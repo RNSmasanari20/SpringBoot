@@ -6,55 +6,209 @@
 </head>
 
 <body>
-<h1>商品一覧</h1>
-<table>
-    <tr>
-        <th>id</th>
-        <th>名前</th>
-        <th>値段</th>
-    </tr>
-    <tr id ="tableMain">
-<!--        <td><input type="radio" id="radId"><span id="id"></span></td>-->
-<!--        <td id="name"></td>-->
-<!--        <td id="price"></td>-->
-    </tr>
-</table>
 
+<h1>商品一覧</h1>
+
+<div id="tableMain2"></div>
+
+<h2>商品追加</h2>
+<p><label for="addName">名前：</label><input type="text" name="addName" id="addName"></p>
+<p><label for="addPrice">値段：</label><input type="text" name="addPrice" id="addPrice"></p>
+<button type="button" id="addBtn">追加</button>
+<br>
+
+<h2>商品編集</h2>
+<p><label for="editId">id　：</label><input type="text" name="editId" id="editId" disabled></p>
+<p><label for="editName">名前：</label><input type="text" name="editName" id="editName"></p>
+<p><label for="editPrice">値段：</label><input type="text" name="editPrice" id="editPrice"></p>
+<button type="button" id="upBtn">更新</button>
+<button type="button" id="delBtn">削除</button>
 
 <script>
     'use strict';
 
-    fetch(`/api/products`)
-      .then(res => {
-        if(res.status === 400) {
-          document.getElementById('id').textContent = "";
-          document.getElementById('name').textContent = "";
-          document.getElementById('price').textContent = "";
-        } else {
-            res.json()
-            .then(data => {
-            for(let i =0; i< data.length; i++){
-            const table1 = document.createElement("td");
-            tableMain.appendChild(table1)
-            const table2 = document.createElement("td");
-            tableMain.appendChild(table2)
-            const table3 = document.createElement("td");
-            tableMain.appendChild(table3)
+    function showAll(){
+        fetch(`/api/products`).then(res => {
+            if(res.status === 400) {
+                document.getElementById('id').textContent = "";
+                document.getElementById('name').textContent = "";
+                document.getElementById('price').textContent = "";
+            } else {
+                res.json().then(data => {
 
-            document.getElementById('id').textContent = data[i].id;
-          document.getElementById('name').textContent = data[i].name;
-          document.getElementById('price').textContent = data[i].price;
-          console.log(data[2].name);
-}
+                    const table = document.createElement('table');
+                    table.id = "tableAll"
+
+                    const trTh = document.createElement('tr');
+
+                    const thId = document.createElement('th');
+                    thId.textContent = 'id';
+                    trTh.appendChild(thId);
+
+                    const thName = document.createElement('th');
+                    thName.textContent = '名前';
+                    trTh.appendChild(thName);
+
+                    const thPrice = document.createElement('th');
+                    thPrice.textContent = '値段';
+                    trTh.appendChild(thPrice);
+
+                    table.appendChild(trTh);
+
+                    for(let i=0; i<data.length; i++){
+                        let trCon = document.createElement('tr');
+
+                        let tdId = document.createElement('td');
+                        trCon.appendChild(tdId);
+
+                        let label = document.createElement('label');
+                        label.for=data[i].id;
+                        label.textContent = data[i].id;
+                        tdId.appendChild(label);
+
+                        let input_radio = document.createElement("input");
+                        input_radio.type = "radio";
+                        input_radio.name = "product_radio";
+                        input_radio.id = data[i].id;
+                        input_radio.onchange = function() {func1()};
+                        label.appendChild(input_radio);
+
+                        let tdName = document.createElement('td');
+                        tdName.textContent = data[i].name;
+                        trCon.appendChild(tdName);
+
+                        let tdPrice = document.createElement('td');
+                        tdPrice.textContent = data[i].price;
+                        trCon.appendChild(tdPrice);
+
+                        table.appendChild(trCon);
+                        document.getElementById('tableMain2').appendChild(table);
+                    }
+                });
+            }
+        });
+    }
+    showAll();
 
 
-            })
+
+    function func1() {
+        var getLblId = document.getElementsByName("product_radio");
+        for(var i = 0; i < getLblId.length; i++){
+            if(getLblId[i].checked) {
+                    fetch(`/api/product/${getLblId[i].id}`).then(res =>{
+                        if(res.status === 400){
+                        document.getElementById('editId').value = "";
+                        document.getElementById('editName').value = "";
+                        document.getElementById('editPrice').value = "";
+                        } else{
+                            res.json().then(data => {
+                                document.getElementById('editId').value = data.id;
+                                document.getElementById('editName').value = data.name;
+                                document.getElementById('editPrice').value = data.price;
+                            })
+                        }
+                    })
+            }
         }
+    }
+    func1();
+
+
+
+    document.getElementById('addBtn').addEventListener('click', () => {
+        const product ={
+            id: 1,
+            name: document.getElementById('addName').value,
+            price: parseFloat(document.getElementById('addPrice').value),
+        }
+        fetch(`/api/product`, {
+            method: 'POST',
+            headers: {
+            'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(product),
+        })
+        .then(res => {
+            if(res.status === 400){
+                document.getElementById('addName').value = "";
+                document.getElementById('addPrice').value = '';
+            } else {
+                document.getElementById('addName').value = "";
+                document.getElementById('addPrice').value = '';
+                document.getElementById('tableMain2').innerHTML = "";
+                showAll();
+            }
+        })
     });
 
 
 
-</script>
+    document.getElementById('upBtn').addEventListener("click", ()=>{
 
+        const result =  window.confirm('更新しても宜しいですか？');
+        if(result){
+            const upProduct ={
+                id: document.getElementById('editId').value,
+                name: document.getElementById('editName').value,
+                price: document.getElementById('editPrice').value,
+            }
+            fetch(`/api/product/${document.getElementById('editId').value}`,{
+                method: 'PUT',
+                headers: {
+                'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(upProduct),
+            })
+            .then(res =>{
+                if(res.status === 400){
+                    document.getElementById('editId').value = "";
+                    document.getElementById('editName').value = "";
+                    document.getElementById('editPrice').value = '';
+                }else {
+                    document.getElementById('editId').value = "";
+                    document.getElementById('editName').value = "";
+                    document.getElementById('editPrice').value = '';
+                    document.getElementById('tableMain2').innerHTML = "";
+                    showAll();
+                }
+            });
+            }else{
+            }
+        });
+
+
+    document.getElementById('delBtn').addEventListener("click", () =>{
+        const result =  window.confirm('削除しても宜しいですか？');
+        if(result){
+            const upProduct ={
+                id: document.getElementById('editId').value,
+                name: document.getElementById('editName').value,
+                price: document.getElementById('editPrice').value,
+            }
+            fetch(`/api/product/${document.getElementById('editId').value}`,{
+                method: 'DELETE',
+                headers: {
+                'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(upProduct),
+            })
+            .then(res =>{
+                if(res.status === 400){
+                    document.getElementById('editId').value = "";
+                    document.getElementById('editName').value = "";
+                    document.getElementById('editPrice').value = '';
+                }else {
+                    document.getElementById('editId').value = "";
+                    document.getElementById('editName').value = "";
+                    document.getElementById('editPrice').value = '';
+                    document.getElementById('tableMain2').innerHTML = "";
+                    showAll();
+                }
+            });
+            } else {
+            }
+        });
+</script>
 </body>
 </html>
