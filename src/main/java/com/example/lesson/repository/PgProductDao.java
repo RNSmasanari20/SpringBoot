@@ -56,7 +56,6 @@ public class PgProductDao implements ProductDao {
         var param = new MapSqlParameterSource();
         param.addValue("id", id);
         return jdbcTemplate.update("DELETE FROM products WHERE id = :id", param);
-
     }
 }
 

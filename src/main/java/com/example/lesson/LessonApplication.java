@@ -31,5 +31,4 @@ public class LessonApplication {
 
 //        System.out.println(pgProductService.delete(5) + "件更新しました");
     }
-
 }

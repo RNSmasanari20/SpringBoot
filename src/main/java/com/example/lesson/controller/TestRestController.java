@@ -46,5 +46,4 @@ public class TestRestController {
         productService.delete(productRecord.id());
         return new ResponseEntity<>(HttpStatus.OK);
     }
-
 }

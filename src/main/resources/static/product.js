@@ -1,5 +1,4 @@
-<script>
-    'use strict';
+'use strict';
 
     fetch(`/api/products`)
       .then(res => {
@@ -53,6 +52,3 @@
             })
         }
       });
-
-
-</script>

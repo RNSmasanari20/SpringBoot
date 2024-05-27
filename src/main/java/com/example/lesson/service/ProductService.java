@@ -15,4 +15,5 @@ public interface ProductService {
     int update(ProductRecord productRecord);
 
     int delete(int id);
+
 }

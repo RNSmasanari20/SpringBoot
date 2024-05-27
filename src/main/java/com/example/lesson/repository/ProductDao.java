@@ -16,4 +16,5 @@ public interface ProductDao {
     int update(ProductRecord productRecord) throws SQLException;
 
     int delete(int id) throws SQLException;
+
 }

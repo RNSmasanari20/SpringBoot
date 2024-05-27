@@ -21,4 +21,5 @@ public class UpForm {
     @Min(0)
     @Max(Integer.MAX_VALUE)
     private Integer price;
+
 }

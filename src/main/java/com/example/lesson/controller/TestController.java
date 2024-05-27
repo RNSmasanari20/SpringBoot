@@ -92,6 +92,5 @@ public class TestController {
     public String screenSend(){
         return "productsOneScreen";
     }
-
 }
 
